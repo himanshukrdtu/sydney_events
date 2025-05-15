@@ -11,6 +11,7 @@ const App = () => {
 
   const BASE_URL = 'https://sydney-events-tz1m.onrender.com/api';
 
+  // Fetch events from DB and update state
   const fetchEvents = async () => {
     setLoading(true);
     try {
@@ -22,17 +23,23 @@ const App = () => {
     setLoading(false);
   };
 
+  // Trigger scraping on backend
   const scrapeEvents = async () => {
     try {
       await axios.post(`${BASE_URL}/scrape`);
-      fetchEvents();
+      // After scraping, fetch the updated events
+      await fetchEvents();
     } catch (err) {
       console.error('Scraping failed:', err);
     }
   };
 
   useEffect(() => {
+    // Step 1: Fetch current events immediately
     fetchEvents();
+
+    // Step 2: Trigger scraping in the background (don't await here so UI isn't blocked)
+    scrapeEvents();
   }, []);
 
   const handleBuyTicket = (link) => {
