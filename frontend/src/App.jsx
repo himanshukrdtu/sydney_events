@@ -9,10 +9,12 @@ const App = () => {
   const [selectedLink, setSelectedLink] = useState('');
   const [email, setEmail] = useState('');
 
+  const BASE_URL = 'https://sydney-events-tz1m.onrender.com/api';
+
   const fetchEvents = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('http://localhost:5000/api/events');
+      const res = await axios.get(`${BASE_URL}/events`);
       setEvents(res.data);
     } catch (err) {
       console.error('Failed to fetch events:', err);
@@ -22,7 +24,7 @@ const App = () => {
 
   const scrapeEvents = async () => {
     try {
-      await axios.post('http://localhost:5000/api/scrape');
+      await axios.post(`${BASE_URL}/scrape`);
       fetchEvents();
     } catch (err) {
       console.error('Scraping failed:', err);
@@ -38,22 +40,21 @@ const App = () => {
     setShowModal(true);
   };
 
- const handleEmailSubmit = async () => {
-  if (email.trim()) {
-    try {
-      await axios.post('http://localhost:5000/api/subscribe', { email });
-      setShowModal(false);
-      window.open(selectedLink, '_blank');
-      setEmail('');
-    } catch (err) {
-      console.error('Error saving email:', err);
-      alert('Failed to save email. Please try again.');
+  const handleEmailSubmit = async () => {
+    if (email.trim()) {
+      try {
+        await axios.post(`${BASE_URL}/subscribe`, { email });
+        setShowModal(false);
+        window.open(selectedLink, '_blank');
+        setEmail('');
+      } catch (err) {
+        console.error('Error saving email:', err);
+        alert('Failed to save email. Please try again.');
+      }
+    } else {
+      alert('Please enter a valid email address');
     }
-  } else {
-    alert('Please enter a valid email address');
-  }
-};
-
+  };
 
   return (
     <div className="app-container">
